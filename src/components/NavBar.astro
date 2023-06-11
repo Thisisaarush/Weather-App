@@ -1,0 +1,29 @@
+---
+import githubIcon from "../../github.svg";
+import searchIcon from "../../search.svg";
+---
+
+<nav class="w-fit flex justify-center items-center p-4 gap-4">
+  <div
+    class="bg-card-black px-6 py-4 rounded-xl flex justify-center items-center"
+  >
+    <p class="text-white font-bold text-2xl mr-10">w.</p>
+    <form class="relative search" onsubmit="return event.preventDefault()">
+      <input
+        type="search"
+        placeholder="Search Your City/Place"
+        class="w-[300px] text-sm py-2 px-10 rounded-sm bg-white/80 placeholder:text-black/50"
+        required
+        minlength="1"
+      />
+      <img
+        src={searchIcon}
+        alt="search icon"
+        class="absolute top-1/2 left-2 -translate-y-1/2"
+      />
+    </form>
+  </div>
+</nav>
+<div class="bg-card-black p-3 rounded-[10px]">
+  <img src={githubIcon} alt="github icon" />
+</div>
