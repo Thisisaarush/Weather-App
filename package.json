@@ -2,6 +2,7 @@
   "name": "weather-app",
   "type": "module",
   "version": "0.0.1",
+  "license": "MIT license",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
