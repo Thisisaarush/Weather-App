@@ -1,10 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import NavBar from "../components/NavBar.astro";
+import Quote from "../components/Quote.astro";
+import CardWrapper from "../components/CardWrapper.astro";
 ---
 
-<Layout title="Welcome to Astro.">
-  <main class="bg-red-100 flex items-center justify-center">
-		<NavBar />
-	</main>
+<Layout title="w. | weather & more">
+  <main class="flex items-center justify-center flex-col">
+    <NavBar />
+    <Quote />
+    <CardWrapper />
+  </main>
 </Layout>

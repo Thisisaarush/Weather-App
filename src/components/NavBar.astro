@@ -3,16 +3,16 @@ import githubIcon from "../../github.svg";
 import searchIcon from "../../search.svg";
 ---
 
-<nav class="w-fit flex justify-center items-center p-4 gap-4">
+<nav class="w-fit flex justify-center items-center mt-8 gap-2 sm:gap-4">
   <div
-    class="bg-card-black px-6 py-4 rounded-xl flex justify-center items-center"
+    class="bg-card-black px-4 sm:px-6 py-4 rounded-xl flex justify-center items-center"
   >
-    <p class="text-white font-bold text-2xl mr-10">w.</p>
+    <p class="text-white font-bold text-2xl mr-4 sm:mr-10">w.</p>
     <form class="relative search" onsubmit="return event.preventDefault()">
       <input
         type="search"
         placeholder="Search Your City/Place"
-        class="w-[300px] text-sm py-2 px-10 rounded-sm bg-white/80 placeholder:text-black/50"
+        class="w-[200px] sm:w-[300px] text-sm py-2 pl-10 pr-4 rounded-sm bg-white/70 hover:bg-white/90 focus:bg-white/90 placeholder:text-black/50"
         required
         minlength="1"
       />
@@ -23,7 +23,12 @@ import searchIcon from "../../search.svg";
       />
     </form>
   </div>
+
+  <a
+    href="https://github.com/Thisisaarush/Weather-App"
+    target="_blank"
+    class="bg-card-black p-3 rounded-[10px] hover:bg-white/10"
+  >
+    <img src={githubIcon} alt="github" />
+  </a>
 </nav>
-<div class="bg-card-black p-3 rounded-[10px]">
-  <img src={githubIcon} alt="github icon" />
-</div>

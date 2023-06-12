@@ -1,0 +1,11 @@
+---
+export interface props {
+  color: string;
+}
+
+const { bgColor } = Astro.props;
+---
+
+<div class={`w-[350px] min-h-[100px] rounded-3xl p-6 ${bgColor}`}>
+  <slot />
+</div>

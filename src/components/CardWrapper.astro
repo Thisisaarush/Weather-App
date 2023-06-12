@@ -1,0 +1,82 @@
+---
+import Card from "./Card.astro";
+
+import WeatherIcon from "../../weather.svg";
+import FeelsLikeIcon from "../../feels-like.svg";
+import LocationIcon from "../../location.svg";
+import WindIcon from "../../wind.svg";
+import HumidityIcon from "../../humidity.svg";
+import VisibilityIcon from "../../visibility.svg";
+---
+
+<div class="mb-10">
+  <div class="gap-4 flex flex-col justify-center items-center">
+    <Card bgColor="bg-card-blue">
+      <div>
+        <p class="font-bold text-xl capitalize">Weather</p>
+        <p class="text-sm text-black/40 capitalize">Monday, June 5</p>
+      </div>
+      <div class="flex justify-end">
+        <p class="font-bold text-[64px] w-fit mr-4">24&deg</p>
+      </div>
+      <div class="capitalize text-sm font-semibold">
+        <span class="flex items-center justify-items-center gap-2">
+          <img src={WeatherIcon} alt="weather" />
+          <p>Cloudy</p>
+        </span>
+        <span class="flex items-center justify-items-center gap-2">
+          <img src={FeelsLikeIcon} alt="feels like" />
+          <p>feels like 32&deg</p>
+        </span>
+        <span class="flex items-center justify-items-center gap-2">
+          <img src={LocationIcon} alt="location" />
+          <p>Jaipur, Rajasthan</p>
+        </span>
+      </div>
+      <div
+        class="bg-black/10 rounded-lg mt-4 flex items-center justify-evenly p-1 capitalize text-center"
+      >
+        <p class="bg-white rounded-md p-2 w-1/2 cursor-pointer">celsius</p>
+        <p class="w-1/2 cursor-pointer">Fahrenheit</p>
+      </div>
+    </Card>
+    <Card bgColor="bg-card-green">
+      <div class="flex gap-4 flex-col">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="font-medium text-xl capitalize">Wind</p>
+            <span class="flex items-baseline gap-2">
+              <p class="font-bold text-3xl">7.29</p>
+              <p class="text-sm text-black/40">km/h</p>
+            </span>
+          </div>
+          <img src={WindIcon} alt="wind" />
+        </div>
+        <hr class="border-t-black/40" />
+
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="font-medium text-xl capitalize">Humidity</p>
+            <span class="flex items-baseline gap-2">
+              <p class="font-bold text-3xl">84</p>
+              <p class="text-sm text-black/40">%</p>
+            </span>
+          </div>
+          <img src={HumidityIcon} alt="wind" />
+        </div>
+        <hr class="border-t-black/40" />
+
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="font-medium text-xl capitalize">Visibility</p>
+            <span class="flex items-baseline gap-2">
+              <p class="font-bold text-3xl">04</p>
+              <p class="text-sm text-black/40">km</p>
+            </span>
+          </div>
+          <img src={VisibilityIcon} alt="wind" />
+        </div>
+      </div>
+    </Card>
+  </div>
+</div>
