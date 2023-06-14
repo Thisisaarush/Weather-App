@@ -1,20 +1,26 @@
-import { useMemo, type ChangeEvent, useState } from "react";
+import { useMemo, type ChangeEvent, useState, useRef } from "react";
 import searchIcon from "../../src/assets/search.svg";
 
 export const SearchBar = () => {
-  const API_KEY = import.meta.env.OPEN_WEATHER_KEY;
+  const API_KEY = import.meta.env.PUBLIC_OPEN_WEATHER_KEY;
 
-  // const weather_response = await fetch(
-  //   `https://api.openweathermap.org/data/2.5/weather?q=jaipur&units=metric&appid=${API_KEY}`
-  // );
+  const dropdownRef = useRef<HTMLUListElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
-  // const weather_data = await weather_response.json();
-
-  // console.log(weather_data);
+  const [autoCompleteCities, setAutoCompleteCities] = useState<string[]>([]);
+  const [currentCity, setCurrentCity] = useState<string>("Jaipur");
 
   let cities: string[] = [];
   const filteredCities: string[] = [];
-  const [autoCompleteCities, setAutoCompleteCities] = useState<string[]>([]);
+
+  useMemo(async () => {
+    const weather_response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=metric&appid=${API_KEY}`
+    );
+    const weather_data = await weather_response.json();
+
+    console.log(weather_data);
+  }, [currentCity]);
 
   useMemo(async () => {
     try {
@@ -34,6 +40,10 @@ export const SearchBar = () => {
     if (e.target.value.length === 0) {
       filteredCities.length = 0;
       setAutoCompleteCities([...new Set(filteredCities)]);
+      if (dropdownRef?.current && overlayRef?.current) {
+        dropdownRef.current.style.display = "none";
+        overlayRef.current.style.display = "none";
+      }
     }
     if (e.target?.value?.length > 2) {
       cities?.filter((city: string) => {
@@ -42,33 +52,63 @@ export const SearchBar = () => {
         }
       });
       setAutoCompleteCities([...new Set(filteredCities)]);
+      if (
+        dropdownRef?.current &&
+        overlayRef?.current &&
+        filteredCities.length
+      ) {
+        dropdownRef.current.style.display = "block";
+        overlayRef.current.style.display = "block";
+      }
     }
   };
 
+  const handleOverlayClick = () => {
+    if (dropdownRef?.current && overlayRef?.current) {
+      dropdownRef.current.style.display = "none";
+      overlayRef.current.style.display = "none";
+    }
+  };
+
+  const handleCityClick = (e: any) => {
+    setCurrentCity(e.target?.innerText);
+  };
+
   return (
-    <div className="relative">
-      <input
-        type="search"
-        placeholder="Search Your City/Place"
-        className="w-[200px] sm:w-[300px] text-sm py-2 pl-10 pr-4 rounded-md bg-white/70 hover:bg-white/90 focus:bg-white/90 placeholder:text-black/50"
-        onChange={handleSearchChange}
-        required
-      />
-      <img
-        src={searchIcon}
-        alt="search icon"
-        className="absolute top-1/2 left-2 -translate-y-1/2"
-      />
-      <ul className="w-[200px] sm:w-[300px] h-[250px] text-black absolute -bottom-[260px] bg-white rounded-md overflow-scroll">
-        {autoCompleteCities.slice(0, 5).map((city: string) => (
-          <li
-            key={city}
-            className="text-sm capitalize py-3 px-6 last:border-b-0 only:border-b border-b border-gray-200 cursor-pointer hover:bg-black/5"
-          >
-            {city}
-          </li>
-        ))}
-      </ul>
+    <div>
+      <div className="relative z-10">
+        <input
+          type="search"
+          placeholder="Search Your City/Place"
+          className="w-[200px] sm:w-[300px] text-sm py-2 pl-10 pr-4 rounded-md bg-white/70 hover:bg-white/90 focus:bg-white/90 placeholder:text-black/50"
+          onChange={handleSearchChange}
+          required
+        />
+        <img
+          src={searchIcon}
+          alt="search icon"
+          className="absolute top-1/2 left-2 -translate-y-1/2"
+        />
+        <ul
+          ref={dropdownRef}
+          className="hidden w-[200px] sm:w-[300px] h-[200px] text-black absolute -bottom-[210px] bg-white rounded-md overflow-scroll shadow-sm shadow-gray-400"
+        >
+          {autoCompleteCities.slice(0, 5).map((city: string) => (
+            <li
+              key={city}
+              onClick={handleCityClick}
+              className="text-sm capitalize py-3 px-6 last:border-b-0 only:border-b border-b border-gray-200 cursor-pointer hover:bg-black/5"
+            >
+              {city}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div
+        ref={overlayRef}
+        className="hidden w-screen h-screen bg-black/20 fixed inset-0 -z-10"
+        onClick={handleOverlayClick}
+      ></div>
     </div>
   );
 };
