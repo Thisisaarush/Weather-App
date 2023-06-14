@@ -1,27 +1,15 @@
 ---
+import { SearchBar } from "./SearchBar";
+
 import githubIcon from "../../github.svg";
-import searchIcon from "../../search.svg";
 ---
 
 <nav class="w-fit flex justify-center items-center mt-8 gap-2 sm:gap-4">
   <div
-    class="bg-card-black px-4 sm:px-6 py-4 rounded-xl flex justify-center items-center"
+    class="bg-card-black px-4 sm:px-6 py-2 rounded-xl flex justify-center items-center"
   >
-    <p class="text-white font-bold text-2xl mr-4 sm:mr-10">w.</p>
-    <form class="relative search" onsubmit="return event.preventDefault()">
-      <input
-        type="search"
-        placeholder="Search Your City/Place"
-        class="w-[200px] sm:w-[300px] text-sm py-2 pl-10 pr-4 rounded-sm bg-white/70 hover:bg-white/90 focus:bg-white/90 placeholder:text-black/50"
-        required
-        minlength="1"
-      />
-      <img
-        src={searchIcon}
-        alt="search icon"
-        class="absolute top-1/2 left-2 -translate-y-1/2"
-      />
-    </form>
+    <a href="/" class="text-white font-bold text-2xl mr-4 sm:mr-10 p-2">w.</a>
+    <SearchBar client:load />
   </div>
 
   <a
