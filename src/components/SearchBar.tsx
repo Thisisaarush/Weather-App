@@ -36,6 +36,8 @@ export const SearchBar = () => {
       city: currentCity,
       country: weather_data.sys.country,
     });
+
+    console.log($currentWeather);
   }, [currentCity, currentUnit]);
 
   useMemo(async () => {
