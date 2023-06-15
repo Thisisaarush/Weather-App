@@ -1,6 +1,9 @@
 import { useMemo, type ChangeEvent, useState, useRef } from "react";
 import searchIcon from "../../src/assets/search.svg";
 
+import { useStore } from "@nanostores/react";
+import { $currentUnit, $currentWeather } from "../nanoStore";
+
 export const SearchBar = () => {
   const API_KEY = import.meta.env.PUBLIC_OPEN_WEATHER_KEY;
 
@@ -10,7 +13,7 @@ export const SearchBar = () => {
 
   const [autoCompleteCities, setAutoCompleteCities] = useState<string[]>([]);
   const [currentCity, setCurrentCity] = useState<string>("Jaipur");
-  const [currentUnit, setCurrentUnit] = useState<string>("metric");
+  const currentUnit = useStore($currentUnit);
 
   let cities: string[] = [];
   const filteredCities: string[] = [];
@@ -20,6 +23,19 @@ export const SearchBar = () => {
       `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=${currentUnit}&appid=${API_KEY}`
     );
     const weather_data = await weather_response.json();
+    $currentWeather.set({
+      temperature: weather_data.main.temp,
+      weather: weather_data.weather[0].main,
+      weatherIcon: "",
+      feelsLike: weather_data.main.feels_like,
+      wind: weather_data.wind.speed,
+      humidity: weather_data.main.humidity,
+      visibility: weather_data.visibility,
+      sunrise: weather_data.sys.sunrise,
+      sunset: weather_data.sys.sunset,
+      city: currentCity,
+      country: weather_data.sys.country,
+    });
   }, [currentCity, currentUnit]);
 
   useMemo(async () => {
