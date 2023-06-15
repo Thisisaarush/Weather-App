@@ -6,21 +6,21 @@ export const SearchBar = () => {
 
   const dropdownRef = useRef<HTMLUListElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const [autoCompleteCities, setAutoCompleteCities] = useState<string[]>([]);
   const [currentCity, setCurrentCity] = useState<string>("Jaipur");
+  const [currentUnit, setCurrentUnit] = useState<string>("metric");
 
   let cities: string[] = [];
   const filteredCities: string[] = [];
 
   useMemo(async () => {
     const weather_response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=metric&appid=${API_KEY}`
+      `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=${currentUnit}&appid=${API_KEY}`
     );
     const weather_data = await weather_response.json();
-
-    console.log(weather_data);
-  }, [currentCity]);
+  }, [currentCity, currentUnit]);
 
   useMemo(async () => {
     try {
@@ -47,7 +47,7 @@ export const SearchBar = () => {
     }
     if (e.target?.value?.length > 2) {
       cities?.filter((city: string) => {
-        if (city.toLowerCase().includes(e.target.value)) {
+        if (city.toLowerCase().startsWith(e.target?.value.toLowerCase())) {
           filteredCities.push(city);
         }
       });
@@ -72,38 +72,44 @@ export const SearchBar = () => {
 
   const handleCityClick = (e: any) => {
     setCurrentCity(e.target?.innerText);
+    if (searchRef.current) {
+      searchRef.current.value = e.target?.innerText;
+    }
+    if (dropdownRef?.current && overlayRef?.current) {
+      dropdownRef.current.style.display = "none";
+      overlayRef.current.style.display = "none";
+    }
   };
 
   return (
-    <div>
-      <div className="relative z-10">
-        <input
-          type="search"
-          placeholder="Search Your City/Place"
-          className="w-[200px] sm:w-[300px] text-sm py-2 pl-10 pr-4 rounded-md bg-white/70 hover:bg-white/90 focus:bg-white/90 placeholder:text-black/50"
-          onChange={handleSearchChange}
-          required
-        />
-        <img
-          src={searchIcon}
-          alt="search icon"
-          className="absolute top-1/2 left-2 -translate-y-1/2"
-        />
-        <ul
-          ref={dropdownRef}
-          className="hidden w-[200px] sm:w-[300px] h-[200px] text-black absolute -bottom-[210px] bg-white rounded-md overflow-scroll shadow-sm shadow-gray-400"
-        >
-          {autoCompleteCities.slice(0, 5).map((city: string) => (
-            <li
-              key={city}
-              onClick={handleCityClick}
-              className="text-sm capitalize py-3 px-6 last:border-b-0 only:border-b border-b border-gray-200 cursor-pointer hover:bg-black/5"
-            >
-              {city}
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className="relative z-10">
+      <input
+        type="search"
+        ref={searchRef}
+        placeholder="Search Your City/Place"
+        className="w-[200px] sm:w-[300px] text-sm py-2 pl-10 pr-4 rounded-md bg-white/70 hover:bg-white/90 focus:bg-white/90 placeholder:text-black/50"
+        onChange={handleSearchChange}
+        required
+      />
+      <img
+        src={searchIcon}
+        alt="search icon"
+        className="absolute top-1/2 left-2 -translate-y-1/2"
+      />
+      <ul
+        ref={dropdownRef}
+        className="hidden w-[200px] sm:w-[300px] h-[200px] text-black absolute -bottom-[210px] bg-white rounded-md overflow-scroll shadow-sm shadow-gray-400"
+      >
+        {autoCompleteCities.slice(0, 5).map((city: string) => (
+          <li
+            key={city}
+            onClick={handleCityClick}
+            className="text-sm capitalize py-3 px-6 last:border-b-0 only:border-b border-b border-gray-200 cursor-pointer hover:bg-black/5"
+          >
+            {city}
+          </li>
+        ))}
+      </ul>
       <div
         ref={overlayRef}
         className="hidden w-screen h-screen bg-black/20 fixed inset-0 -z-10"
