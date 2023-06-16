@@ -1,4 +1,10 @@
-import { useMemo, type ChangeEvent, useState, useRef } from "react";
+import {
+  useMemo,
+  useState,
+  useRef,
+  type ChangeEvent,
+  type MouseEvent,
+} from "react";
 import searchIcon from "../../src/assets/search.svg";
 
 import { useStore } from "@nanostores/react";
@@ -23,18 +29,26 @@ export const SearchBar = () => {
       `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=${currentUnit}&appid=${API_KEY}`
     );
     const weather_data = await weather_response.json();
+
+    const dateArray = new Date(
+      weather_data?.dt * 1000 + weather_data?.timezone * 1000
+    )
+      .toString()
+      .split(" ");
+
     $currentWeather.set({
-      temperature: weather_data.main.temp,
-      weather: weather_data.weather[0].main,
+      temperature: weather_data.main?.temp,
+      weather: weather_data.weather[0]?.main,
       weatherIcon: "",
-      feelsLike: weather_data.main.feels_like,
-      wind: weather_data.wind.speed,
-      humidity: weather_data.main.humidity,
-      visibility: weather_data.visibility,
-      sunrise: weather_data.sys.sunrise,
-      sunset: weather_data.sys.sunset,
+      feelsLike: weather_data.main?.feels_like,
+      windSpeed: weather_data.wind?.speed,
+      humidity: weather_data.main?.humidity,
+      visibility: weather_data?.visibility,
+      sunrise: weather_data.sys?.sunrise,
+      sunset: weather_data.sys?.sunset,
       city: currentCity,
-      country: weather_data.sys.country,
+      country: weather_data.sys?.country,
+      date: dateArray[0] + "," + " " + dateArray[1] + " " + dateArray[2],
     });
   }, [currentCity, currentUnit]);
 
@@ -86,10 +100,11 @@ export const SearchBar = () => {
     }
   };
 
-  const handleCityClick = (e: any) => {
-    setCurrentCity(e.target?.innerText);
+  const handleCityClick = (e: MouseEvent<HTMLLIElement>) => {
+    const li = e.target as HTMLElement;
+    setCurrentCity(li?.innerText);
     if (searchRef.current) {
-      searchRef.current.value = e.target?.innerText;
+      searchRef.current.value = li?.innerText;
     }
     if (dropdownRef?.current && overlayRef?.current) {
       dropdownRef.current.style.display = "none";
