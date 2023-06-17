@@ -1,10 +1,9 @@
-import type { MouseEvent } from "react";
+import { useEffect, type MouseEvent, useRef } from "react";
 import { Card } from "./Card";
 import { useStore } from "@nanostores/react";
 import { $currentUnit, $currentWeather } from "../nanoStore";
 
 // icons
-import WeatherIcon from "../../src/assets/weather.svg";
 import FeelsLikeIcon from "../../src/assets/feels-like.svg";
 import LocationIcon from "../../src/assets/location.svg";
 import WindIcon from "../../src/assets/wind.svg";
@@ -19,6 +18,16 @@ import NextIcon from "../../src/assets/next.svg";
 import PreviousIcon from "../../src/assets/previous.svg";
 
 export const CardWrapper = () => {
+  const currentUnit = useStore($currentUnit);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const currentUnit = localStorage.getItem("currentUnit");
+    if (inputRef.current && inputRef.current.id === currentUnit) {
+      inputRef.current?.setAttribute("checked", "true");
+    }
+  }, []);
+
   const {
     temperature,
     weather,
@@ -37,6 +46,7 @@ export const CardWrapper = () => {
   const handleUnitChange = (e: MouseEvent<HTMLInputElement>) => {
     const input = e.target as HTMLElement;
     $currentUnit.set(input?.id);
+    localStorage.setItem("currentUnit", input?.id);
   };
 
   return (
@@ -57,7 +67,7 @@ export const CardWrapper = () => {
           </div>
           <div className="capitalize text-sm font-semibold">
             <span className="flex items-center justify-items-center gap-2">
-              <img src={WeatherIcon} alt="weather" />
+              <img src={weatherIcon} alt="weather" width="20px" height="20px" />
               <p>{weather}</p>
             </span>
             <span className="flex items-center justify-items-center gap-2">
@@ -77,6 +87,7 @@ export const CardWrapper = () => {
               id="metric"
               name="unit"
               onClick={handleUnitChange}
+              ref={inputRef}
               className="hidden peer/metric"
               defaultChecked
             />
@@ -91,6 +102,7 @@ export const CardWrapper = () => {
               id="imperial"
               name="unit"
               onClick={handleUnitChange}
+              ref={inputRef}
               className="hidden peer/imperial"
             />
             <label
@@ -107,8 +119,14 @@ export const CardWrapper = () => {
               <div>
                 <p className="font-medium text-xl capitalize">Wind</p>
                 <span className="flex items-baseline gap-2">
-                  <p className="font-bold text-3xl">7.29</p>
-                  <p className="text-sm text-black/40">km/h</p>
+                  <p className="font-bold text-3xl">
+                    {currentUnit === "metric"
+                      ? Math.floor(windSpeed * 3.6)
+                      : Math.floor(windSpeed)}
+                  </p>
+                  <p className="text-sm text-black/40">
+                    {currentUnit === "metric" ? "km/h" : "miles/h"}
+                  </p>
                 </span>
               </div>
               <img src={WindIcon} alt="wind" />
@@ -119,7 +137,7 @@ export const CardWrapper = () => {
               <div>
                 <p className="font-medium text-xl capitalize">Humidity</p>
                 <span className="flex items-baseline gap-2">
-                  <p className="font-bold text-3xl">84</p>
+                  <p className="font-bold text-3xl">{humidity}</p>
                   <p className="text-sm text-black/40">%</p>
                 </span>
               </div>
@@ -131,8 +149,14 @@ export const CardWrapper = () => {
               <div>
                 <p className="font-medium text-xl capitalize">Visibility</p>
                 <span className="flex items-baseline gap-2">
-                  <p className="font-bold text-3xl">04</p>
-                  <p className="text-sm text-black/40">km</p>
+                  <p className="font-bold text-3xl">
+                    {currentUnit === "metric"
+                      ? visibility / 1000
+                      : Math.floor(visibility / 1000 / 1.609)}
+                  </p>
+                  <p className="text-sm text-black/40">
+                    {currentUnit === "metric" ? "km" : "miles"}
+                  </p>
                 </span>
               </div>
               <img src={VisibilityIcon} alt="wind" />
@@ -153,14 +177,8 @@ export const CardWrapper = () => {
               <img src={SunriseIcon} alt="sunrise & sunset" />
             </span>
             <div className="flex justify-between">
-              <span className="flex items-baseline gap-1">
-                <p className="font-bold text-2xl">5:50</p>
-                <p className="text-sm text-black/40">am</p>
-              </span>
-              <span className="flex items-baseline gap-1">
-                <p className="font-bold text-2xl">7:00</p>
-                <p className="text-sm text-black/40">pm</p>
-              </span>
+              <p className="font-bold text-2xl">{sunrise}</p>
+              <p className="font-bold text-2xl">{sunset}</p>
             </div>
           </div>
         </Card>

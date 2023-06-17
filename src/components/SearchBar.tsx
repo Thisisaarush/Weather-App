@@ -4,11 +4,13 @@ import {
   useRef,
   type ChangeEvent,
   type MouseEvent,
+  useEffect,
 } from "react";
 import searchIcon from "../../src/assets/search.svg";
 
 import { useStore } from "@nanostores/react";
 import { $currentUnit, $currentWeather } from "../nanoStore";
+import moment from "moment";
 
 export const SearchBar = () => {
   const API_KEY = import.meta.env.PUBLIC_OPEN_WEATHER_KEY;
@@ -18,17 +20,23 @@ export const SearchBar = () => {
   const searchRef = useRef<HTMLInputElement>(null);
 
   const [autoCompleteCities, setAutoCompleteCities] = useState<string[]>([]);
-  const [currentCity, setCurrentCity] = useState<string>("Jaipur");
+  const [currentCity, setCurrentCity] = useState<string | null>("Jaipur");
   const currentUnit = useStore($currentUnit);
 
   let cities: string[] = [];
   const filteredCities: string[] = [];
+
+  useEffect(() => {
+    setCurrentCity(localStorage.getItem("currentCity"));
+    $currentUnit.set(localStorage.getItem("currentUnit"));
+  }, []);
 
   useMemo(async () => {
     const weather_response = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=${currentUnit}&appid=${API_KEY}`
     );
     const weather_data = await weather_response.json();
+    const weather_icon = `https://openweathermap.org/img/wn/${weather_data?.weather[0]?.icon}@2x.png`;
 
     const dateArray = new Date(
       weather_data?.dt * 1000 + weather_data?.timezone * 1000
@@ -36,16 +44,19 @@ export const SearchBar = () => {
       .toString()
       .split(" ");
 
+    const sunrise = moment.unix(weather_data?.sys.sunrise).format("LT");
+    const sunset = moment.unix(weather_data?.sys.sunset).format("LT");
+
     $currentWeather.set({
       temperature: weather_data.main?.temp,
       weather: weather_data.weather[0]?.main,
-      weatherIcon: "",
+      weatherIcon: weather_icon,
       feelsLike: weather_data.main?.feels_like,
       windSpeed: weather_data.wind?.speed,
       humidity: weather_data.main?.humidity,
       visibility: weather_data?.visibility,
-      sunrise: weather_data.sys?.sunrise,
-      sunset: weather_data.sys?.sunset,
+      sunrise: sunrise,
+      sunset: sunset,
       city: currentCity,
       country: weather_data.sys?.country,
       date: dateArray[0] + "," + " " + dateArray[1] + " " + dateArray[2],
@@ -103,6 +114,7 @@ export const SearchBar = () => {
   const handleCityClick = (e: MouseEvent<HTMLLIElement>) => {
     const li = e.target as HTMLElement;
     setCurrentCity(li?.innerText);
+    localStorage.setItem("currentCity", li?.innerText);
     if (searchRef.current) {
       searchRef.current.value = li?.innerText;
     }
