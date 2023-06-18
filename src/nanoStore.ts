@@ -13,7 +13,7 @@ type TWEATHER = {
   city: string | null;
   country: string;
   date: string;
-  uv: number;
+  uv: string;
   air: number;
   forecast: { minTemp: number; maxTemp: number; icon: string; date: string }[];
 };
@@ -32,7 +32,7 @@ export const $currentWeather = map<TWEATHER>({
   city: "",
   country: "",
   date: "",
-  uv: 0,
+  uv: "",
   air: 0,
   forecast: [],
 });
