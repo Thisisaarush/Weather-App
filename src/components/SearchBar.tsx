@@ -39,7 +39,7 @@ export const SearchBar = () => {
     const weather_icon = `https://openweathermap.org/img/wn/${weather_data?.weather[0]?.icon}@2x.png`;
 
     const air_pollution_data = await fetch(
-      `http://api.openweathermap.org/data/2.5/air_pollution?lat=${weather_data.coord.lat}&lon=${weather_data.coord.lon}&appid=${OPEN_API_KEY}`
+      `https://api.openweathermap.org/data/2.5/air_pollution?lat=${weather_data.coord.lat}&lon=${weather_data.coord.lon}&appid=${OPEN_API_KEY}`
     );
     const air_pollution = await air_pollution_data.json();
 
