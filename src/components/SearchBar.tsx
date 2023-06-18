@@ -28,7 +28,7 @@ export const SearchBar = () => {
   const filteredCities: string[] = [];
 
   useEffect(() => {
-    setCurrentCity(localStorage.getItem("currentCity"));
+    setCurrentCity(localStorage.getItem("currentCity") || "jaipur");
     $currentUnit.set(localStorage.getItem("currentUnit") || "metric");
   }, []);
 
