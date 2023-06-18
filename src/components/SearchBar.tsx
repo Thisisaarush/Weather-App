@@ -88,8 +88,9 @@ export const SearchBar = () => {
       city: currentCity,
       country: weather_data.sys?.country,
       date: day + ", " + date,
-      uv: forecast_data?.daily[0]?.uvIndex || "0",
-      air: air_pollution?.list[0]?.main?.aqi,
+      uv:
+        (forecast_data.daily.length && forecast_data?.daily[0]?.uvIndex) || "0",
+      air: air_pollution.list.length && air_pollution?.list[0]?.main?.aqi,
       forecast: forecast?.slice(1),
     });
   }, [currentCity, currentUnit]);
