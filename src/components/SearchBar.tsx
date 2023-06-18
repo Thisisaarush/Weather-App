@@ -38,14 +38,18 @@ export const SearchBar = () => {
     const weather_data = await weather_response.json();
     const weather_icon = `https://openweathermap.org/img/wn/${weather_data?.weather[0]?.icon}@2x.png`;
 
-    const dateArray = new Date(
-      weather_data?.dt * 1000 + weather_data?.timezone * 1000
-    )
-      .toString()
-      .split(" ");
-
-    const sunrise = moment.unix(weather_data?.sys.sunrise).format("LT");
-    const sunset = moment.unix(weather_data?.sys.sunset).format("LT");
+    const day = moment(weather_data.dt * 1000).format("dddd");
+    const date = moment(weather_data.dt * 1000).format("MMMM DD");
+    const sunrise = moment
+      .unix(weather_data?.sys.sunrise)
+      .utc()
+      .add(weather_data.timezone, "seconds")
+      .format("LT");
+    const sunset = moment
+      .unix(weather_data?.sys.sunset)
+      .utc()
+      .add(weather_data.timezone, "seconds")
+      .format("LT");
 
     $currentWeather.set({
       temperature: weather_data.main?.temp,
@@ -59,7 +63,7 @@ export const SearchBar = () => {
       sunset: sunset,
       city: currentCity,
       country: weather_data.sys?.country,
-      date: dateArray[0] + "," + " " + dateArray[1] + " " + dateArray[2],
+      date: day + ", " + date,
     });
   }, [currentCity, currentUnit]);
 
