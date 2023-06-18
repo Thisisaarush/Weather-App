@@ -20,6 +20,13 @@ import PreviousIcon from "../../src/assets/previous.svg";
 export const CardWrapper = () => {
   const currentUnit = useStore($currentUnit);
   const inputRef = useRef<HTMLInputElement>(null);
+  const air_quality: { [key: number]: string } = {
+    1: "Good",
+    2: "Fair",
+    3: "Moderate",
+    4: "Poor",
+    5: "Very Poor",
+  };
 
   useEffect(() => {
     const currentUnit = localStorage.getItem("currentUnit");
@@ -41,6 +48,9 @@ export const CardWrapper = () => {
     city,
     country,
     date,
+    uv,
+    air,
+    forecast,
   } = useStore($currentWeather);
 
   const handleUnitChange = (e: MouseEvent<HTMLInputElement>) => {
@@ -168,7 +178,26 @@ export const CardWrapper = () => {
       {/* Second Column */}
       <div className="gap-4 flex flex-col justify-center items-center">
         <Card color="bg-card-pink" height="h-[420px]">
-          <p className="font-bold text-xl capitalize">Forecast</p>
+          <p className="font-bold text-xl capitalize mb-2">Forecast</p>
+          <ul className="flex flex-col">
+            {forecast?.map((day) => (
+              <li
+                className="flex gap-3 items-center first:bg-white p-1 rounded-md first:py-3 first:shadow-sm"
+                key={day.date}
+              >
+                <img src={day.icon} alt="weather" width="40px" height="40px" />
+                <span className="flex font-medium items-baseline">
+                  <p className="text-xl">{Math.floor(day.maxTemp)}&deg;/</p>
+                  <p className="text-black/70">
+                    {Math.floor(day.minTemp)}&deg;
+                  </p>
+                </span>
+                <p className="text-sm text-black/70 w-1/2 text-end">
+                  {day.date}
+                </p>
+              </li>
+            ))}
+          </ul>
         </Card>
         <Card color="bg-card-yellow" height="h-[220px]">
           <div className="flex flex-col gap-4">
@@ -202,16 +231,31 @@ export const CardWrapper = () => {
         <Card color="bg-card-purple" height="h-[208px]">
           <span className="flex flex-col justify-center items-center">
             <img src={UvIcon} alt="uv" width="120px" />
-            <p className="font-bold text-4xl">5.50</p>
+            <p className="font-bold text-4xl">{uv}</p>
           </span>
         </Card>
         <Card color="bg-card-black text-white" height="h-[208px]">
-          <p className="font-bold text-xl capitalize mb-10">
-            Air Quality Index
-          </p>
-          <span className="flex flex-col justify-center items-center capitalize">
-            <p className="font-bold text-5xl">120</p>
-            <p>Above Normal</p>
+          <p className="font-bold text-xl capitalize mb-6">Air Quality Index</p>
+          <span className="flex flex-col justify-center items-center gap-2">
+            <p className="font-bold text-5xl">{air}</p>
+            <p>{air_quality[air]}</p>
+            <input
+              type="range"
+              min="1"
+              max="5"
+              value={air}
+              step="1"
+              list="values"
+              readOnly
+              className="bg-gradient-to-r from-green-500 to-red-500 appearance-none h-1 rounded-full accent-white flex justify-center items-center"
+            />
+            <datalist id="values" className="flex text-sm text-white/50 gap-4">
+              <option value="1" label="1"></option>
+              <option value="2" label="2"></option>
+              <option value="3" label="3"></option>
+              <option value="4" label="4"></option>
+              <option value="5" label="5"></option>
+            </datalist>
           </span>
         </Card>
       </div>

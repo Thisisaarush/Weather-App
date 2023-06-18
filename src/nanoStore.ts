@@ -13,6 +13,9 @@ type TWEATHER = {
   city: string | null;
   country: string;
   date: string;
+  uv: number;
+  air: number;
+  forecast: { minTemp: number; maxTemp: number; icon: string; date: string }[];
 };
 
 export const $currentUnit = atom<string | null>("metric");
@@ -29,4 +32,7 @@ export const $currentWeather = map<TWEATHER>({
   city: "",
   country: "",
   date: "",
+  uv: 0,
+  air: 0,
+  forecast: [],
 });

@@ -1,14 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import NavBar from "../components/NavBar.astro";
-import Quote from "../components/Quote.astro";
 import { CardWrapper } from "../components/CardWrapper";
 ---
 
 <Layout title="w. | weather & more">
-  <main class="flex items-center justify-center flex-col">
+  <main class="flex items-center justify-center flex-col gap-16">
     <NavBar />
-    <Quote />
     <CardWrapper client:visible />
   </main>
 </Layout>

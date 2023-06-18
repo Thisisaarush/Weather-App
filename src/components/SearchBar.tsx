@@ -13,7 +13,7 @@ import { $currentUnit, $currentWeather } from "../nanoStore";
 import moment from "moment";
 
 export const SearchBar = () => {
-  const API_KEY = import.meta.env.PUBLIC_OPEN_WEATHER_KEY;
+  const OPEN_API_KEY = import.meta.env.PUBLIC_OPEN_WEATHER_KEY;
 
   const dropdownRef = useRef<HTMLUListElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -33,10 +33,35 @@ export const SearchBar = () => {
 
   useMemo(async () => {
     const weather_response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=${currentUnit}&appid=${API_KEY}`
+      `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=${currentUnit}&appid=${OPEN_API_KEY}`
     );
     const weather_data = await weather_response.json();
     const weather_icon = `https://openweathermap.org/img/wn/${weather_data?.weather[0]?.icon}@2x.png`;
+
+    const air_pollution_data = await fetch(
+      `http://api.openweathermap.org/data/2.5/air_pollution?lat=${weather_data.coord.lat}&lon=${weather_data.coord.lon}&appid=${OPEN_API_KEY}`
+    );
+    const air_pollution = await air_pollution_data.json();
+
+    const forecast_response = await fetch(
+      `https://api.openweathermap.org/data/2.5/onecall?lat=${weather_data.coord.lat}&lon=${weather_data.coord.lon}&units=${currentUnit}&appid=${OPEN_API_KEY}`
+    );
+    const forecast_data = await forecast_response.json();
+
+    const uv = forecast_data?.current?.uvi;
+    const forecast = forecast_data?.daily?.map(
+      (day: { [key: string]: any }) => {
+        return {
+          minTemp: day?.temp?.min,
+          maxTemp: day?.temp?.max,
+          icon: `https://openweathermap.org/img/wn/${day?.weather[0]?.icon}@2x.png`,
+          date:
+            moment(Number(day.dt) * 1000).format("dddd") +
+            ", " +
+            moment(Number(day.dt) * 1000).format("MMMM DD"),
+        };
+      }
+    );
 
     const day = moment(weather_data.dt * 1000).format("dddd");
     const date = moment(weather_data.dt * 1000).format("MMMM DD");
@@ -64,6 +89,9 @@ export const SearchBar = () => {
       city: currentCity,
       country: weather_data.sys?.country,
       date: day + ", " + date,
+      uv: uv,
+      air: air_pollution?.list[0]?.main?.aqi,
+      forecast: forecast?.slice(1),
     });
   }, [currentCity, currentUnit]);
 
