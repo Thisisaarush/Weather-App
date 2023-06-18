@@ -48,10 +48,10 @@ export const SearchBar = () => {
       `https://devapi.qweather.com/v7/weather/7d?location=${weather_data.coord.lon},${weather_data.coord.lat}&lang=en&unit=${currentUnit[0]}&key=${Q_API_KEY}`
     );
     const forecast_data = await forecast_response.json();
-    const uv: string =
-      forecast_data.daily[0] !== undefined
-        ? forecast_data?.daily[0]?.uvIndex
-        : "0";
+    // const uv: string =
+    //   forecast_data.daily[0] !== undefined
+    //     ? forecast_data?.daily[0]?.uvIndex
+    //     : "0";
     const forecast = forecast_data?.daily?.map(
       (day: { [key: string]: any }) => {
         return {
@@ -92,7 +92,7 @@ export const SearchBar = () => {
       city: currentCity,
       country: weather_data.sys?.country,
       date: day + ", " + date,
-      uv: uv,
+      uv: "0",
       air: air_pollution?.list[0]?.main?.aqi,
       forecast: forecast?.slice(1),
     });
