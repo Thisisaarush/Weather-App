@@ -49,7 +49,7 @@ export const SearchBar = () => {
     );
     const forecast_data = await forecast_response.json();
 
-    const uv = forecast_data?.daily[0]?.uvIndex;
+    const uv = forecast_data?.daily[0]?.uvIndex || 0;
     const forecast = forecast_data?.daily?.map(
       (day: { [key: string]: any }) => {
         return {
