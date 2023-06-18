@@ -178,15 +178,20 @@ export const CardWrapper = () => {
       {/* Second Column */}
       <div className="gap-4 flex flex-col justify-center items-center">
         <Card color="bg-card-pink" height="h-[420px]">
-          <p className="font-bold text-xl capitalize mb-2">Forecast</p>
+          <p className="font-bold text-xl capitalize mb-4">Forecast</p>
           <ul className="flex flex-col">
             {forecast?.map((day) => (
               <li
-                className="flex gap-3 items-center first:bg-white p-1 rounded-md first:py-3 first:shadow-sm"
+                className="flex gap-3 items-center first:bg-white px-2 py-3 rounded-md first:py-3 first:shadow-sm"
                 key={day.date}
               >
-                <img src={day.icon} alt="weather" width="40px" height="40px" />
-                <span className="flex font-medium items-baseline">
+                <img
+                  src={`../src/assets/weatherIcons/${day.icon}.svg`}
+                  alt="weather"
+                  width="20px"
+                  height="20px"
+                />
+                <span className="flex font-medium items-baseline gap-2">
                   <p className="text-xl">{Math.floor(day.maxTemp)}&deg;/</p>
                   <p className="text-black/70">
                     {Math.floor(day.minTemp)}&deg;

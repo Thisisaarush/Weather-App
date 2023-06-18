@@ -14,6 +14,7 @@ import moment from "moment";
 
 export const SearchBar = () => {
   const OPEN_API_KEY = import.meta.env.PUBLIC_OPEN_WEATHER_KEY;
+  const Q_API_KEY = import.meta.env.PUBLIC_Q_WEATHER_KEY;
 
   const dropdownRef = useRef<HTMLUListElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -28,7 +29,7 @@ export const SearchBar = () => {
 
   useEffect(() => {
     setCurrentCity(localStorage.getItem("currentCity"));
-    $currentUnit.set(localStorage.getItem("currentUnit"));
+    $currentUnit.set(localStorage.getItem("currentUnit") || "metric");
   }, []);
 
   useMemo(async () => {
@@ -44,21 +45,21 @@ export const SearchBar = () => {
     const air_pollution = await air_pollution_data.json();
 
     const forecast_response = await fetch(
-      `https://api.openweathermap.org/data/2.5/onecall?lat=${weather_data.coord.lat}&lon=${weather_data.coord.lon}&units=${currentUnit}&appid=${OPEN_API_KEY}`
+      `https://devapi.qweather.com/v7/weather/7d?location=${weather_data.coord.lon},${weather_data.coord.lat}&lang=en&unit=${currentUnit[0]}&key=${Q_API_KEY}`
     );
     const forecast_data = await forecast_response.json();
 
-    const uv = forecast_data?.current?.uvi;
+    const uv = forecast_data?.daily[0]?.uvIndex;
     const forecast = forecast_data?.daily?.map(
       (day: { [key: string]: any }) => {
         return {
-          minTemp: day?.temp?.min,
-          maxTemp: day?.temp?.max,
-          icon: `https://openweathermap.org/img/wn/${day?.weather[0]?.icon}@2x.png`,
+          minTemp: day?.tempMin,
+          maxTemp: day?.tempMax,
+          icon: day?.iconday || day?.iconNight,
           date:
-            moment(Number(day.dt) * 1000).format("dddd") +
+            moment(day.fxDate).format("dddd") +
             ", " +
-            moment(Number(day.dt) * 1000).format("MMMM DD"),
+            moment(day.fxDate).format("MMMM DD"),
         };
       }
     );
@@ -78,7 +79,7 @@ export const SearchBar = () => {
 
     $currentWeather.set({
       temperature: weather_data.main?.temp,
-      weather: weather_data.weather[0]?.main,
+      weather: weather_data?.weather[0]?.main,
       weatherIcon: weather_icon,
       feelsLike: weather_data.main?.feels_like,
       windSpeed: weather_data.wind?.speed,

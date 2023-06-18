@@ -18,7 +18,7 @@ type TWEATHER = {
   forecast: { minTemp: number; maxTemp: number; icon: string; date: string }[];
 };
 
-export const $currentUnit = atom<string | null>("metric");
+export const $currentUnit = atom<string>("metric");
 export const $currentWeather = map<TWEATHER>({
   temperature: 0,
   weather: "",
