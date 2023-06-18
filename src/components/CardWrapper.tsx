@@ -186,7 +186,7 @@ export const CardWrapper = () => {
                 key={day.date}
               >
                 <img
-                  src={`../assets/weatherIcons/${day.icon}.svg`}
+                  src={`../../src/assets/weatherIcons/${day.icon}.svg`}
                   alt="weather"
                   width="20px"
                   height="20px"
