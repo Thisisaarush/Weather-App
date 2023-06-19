@@ -26,6 +26,16 @@ export const SearchBar = () => {
 
   let cities: string[] = [];
   const filteredCities: string[] = [];
+  let uv: string = "0";
+  let forecast: {
+    minTemp: number;
+    maxTemp: number;
+    icon: string;
+    date: string;
+  }[] = [];
+  let weather_data: { [key: string]: any } = {};
+  let air_pollution: { [key: string]: any } = {};
+  let weather_icon: string = "";
 
   useEffect(() => {
     setCurrentCity(localStorage.getItem("currentCity") || "jaipur");
@@ -33,25 +43,31 @@ export const SearchBar = () => {
   }, []);
 
   useMemo(async () => {
-    const weather_response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=${currentUnit}&appid=${OPEN_API_KEY}`
-    );
-    const weather_data = await weather_response.json();
-    const weather_icon = `https://openweathermap.org/img/wn/${weather_data?.weather[0]?.icon}@2x.png`;
+    try {
+      const weather_response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=${currentUnit}&appid=${OPEN_API_KEY}`
+      );
+      weather_data = await weather_response.json();
+      weather_icon = `https://openweathermap.org/img/wn/${weather_data?.weather[0]?.icon}@2x.png`;
 
-    const air_pollution_data = await fetch(
-      `https://api.openweathermap.org/data/2.5/air_pollution?lat=${weather_data.coord.lat}&lon=${weather_data.coord.lon}&appid=${OPEN_API_KEY}`
-    );
-    const air_pollution = await air_pollution_data.json();
+      const air_pollution_data = await fetch(
+        `https://api.openweathermap.org/data/2.5/air_pollution?lat=${weather_data.coord.lat}&lon=${weather_data.coord.lon}&appid=${OPEN_API_KEY}`
+      );
+      air_pollution = await air_pollution_data.json();
+    } catch (error) {
+      console.log("Request Failed to openWeather Server", Error);
+    }
 
-    const forecast_response = await fetch(
-      `https://devapi.qweather.com/v7/weather/7d?location=${weather_data.coord.lon},${weather_data.coord.lat}&lang=en&unit=${currentUnit[0]}&key=${Q_API_KEY}`
-    );
-    const forecast_data = await forecast_response.json();
-
-    const uv: string = forecast_data?.daily[0]?.uvIndex;
-    const forecast = forecast_data?.daily?.map(
-      (day: { [key: string]: any }) => {
+    try {
+      const forecast_response = await fetch(
+        `https://devapi.qweather.com/v7/weather/7d?location=${weather_data.coord.lon},${weather_data.coord.lat}&lang=en&unit=${currentUnit[0]}&key=${Q_API_KEY}`
+      );
+      const forecast_data = await forecast_response.json();
+      uv =
+        (forecast_data.daily?.length !== 0 &&
+          forecast_data?.daily[0]?.uvIndex) ||
+        "0";
+      forecast = forecast_data?.daily?.map((day: { [key: string]: any }) => {
         return {
           minTemp: day?.tempMin,
           maxTemp: day?.tempMax,
@@ -61,8 +77,10 @@ export const SearchBar = () => {
             ", " +
             moment(day.fxDate).format("MMMM DD"),
         };
-      }
-    );
+      });
+    } catch (error) {
+      console.log("Request to qWeather Server Failed", error);
+    }
 
     const day = moment(weather_data.dt * 1000).format("dddd");
     const date = moment(weather_data.dt * 1000).format("MMMM DD");

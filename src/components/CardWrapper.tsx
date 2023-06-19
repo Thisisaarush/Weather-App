@@ -1,4 +1,4 @@
-import { useEffect, type MouseEvent, useRef } from "react";
+import { useEffect, type MouseEvent, useRef, useState } from "react";
 import { Card } from "./Card";
 import { useStore } from "@nanostores/react";
 import { $currentUnit, $currentWeather } from "../nanoStore";
@@ -17,9 +17,19 @@ import PauseIcon from "../../src/assets/pause.svg";
 import NextIcon from "../../src/assets/next.svg";
 import PreviousIcon from "../../src/assets/previous.svg";
 
+// audio
+import Fireplace from "../../src/assets/audio/crackling-fireplace.mp3";
+import Jungle_Footsteps from "../../src/assets/audio/footsteps-in-water.mp3";
+import Ambient_Jungle from "../../src/assets/audio/jungle-birds.mp3";
+import Mountains from "../../src/assets/audio/mountains-rivers.mp3";
+import Calm_Rain from "../../src/assets/audio/rain-and-thunder.mp3";
+
 export const CardWrapper = () => {
+  const [currentSongNumber, setCurrentSongNumber] = useState<number>(0);
   const currentUnit = useStore($currentUnit);
   const inputRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const playIconRef = useRef<HTMLImageElement>(null);
   const air_quality: { [key: number]: string } = {
     1: "Good",
     2: "Fair",
@@ -27,6 +37,13 @@ export const CardWrapper = () => {
     4: "Poor",
     5: "Very Poor",
   };
+  const sound_data = [
+    Fireplace,
+    Jungle_Footsteps,
+    Ambient_Jungle,
+    Mountains,
+    Calm_Rain,
+  ];
 
   useEffect(() => {
     const currentUnit = localStorage.getItem("currentUnit");
@@ -57,6 +74,42 @@ export const CardWrapper = () => {
     const input = e.target as HTMLElement;
     $currentUnit.set(input?.id);
     localStorage.setItem("currentUnit", input?.id);
+  };
+
+  const handleAudioPlay = async () => {
+    if (playIconRef.current && audioRef.current) {
+      if (playIconRef.current.id === "pause") {
+        playIconRef.current.src = PlayIcon;
+        playIconRef.current.id = "play";
+        await audioRef.current.play();
+      } else {
+        playIconRef.current.src = PauseIcon;
+        playIconRef.current.id = "pause";
+        audioRef.current.pause();
+      }
+    }
+  };
+
+  const handleAudioChange = (e: MouseEvent<HTMLImageElement>) => {
+    const img = e.target as HTMLElement;
+    if (playIconRef.current && playIconRef.current.id === "play") {
+      playIconRef.current.src = PauseIcon;
+      playIconRef.current.id = "pause";
+    }
+
+    if ((img.id = "previous")) {
+      if (currentSongNumber === 0) {
+        setCurrentSongNumber(4);
+      } else {
+        setCurrentSongNumber(currentSongNumber - 1);
+      }
+    } else {
+      if (currentSongNumber === 4) {
+        setCurrentSongNumber(0);
+      } else {
+        setCurrentSongNumber(currentSongNumber + 1);
+      }
+    }
   };
 
   return (
@@ -224,12 +277,29 @@ export const CardWrapper = () => {
           <div className="flex gap-8 flex-col">
             <span className="flex gap-2 justify-center items-center">
               <img src={SoundIcon} alt="sound" />
-              <p className="font-medium text-xl capitalize">Jungle Sound</p>
+              <p className="font-medium text-xl capitalize">Relaxing Sounds</p>
             </span>
             <span className="flex gap-6 justify-center items-center">
-              <img src={PreviousIcon} alt="previous song" />
-              <img src={PlayIcon} alt="play song" />
-              <img src={NextIcon} alt="next song" />
+              <audio src={sound_data[currentSongNumber]} ref={audioRef} />
+              <img
+                src={PreviousIcon}
+                alt="previous song"
+                onClick={handleAudioChange}
+                id="previous"
+              />
+              <img
+                src={PauseIcon}
+                alt="play song"
+                onClick={handleAudioPlay}
+                ref={playIconRef}
+                id="pause"
+              />
+              <img
+                src={NextIcon}
+                alt="next song"
+                onClick={handleAudioChange}
+                id="next"
+              />
             </span>
           </div>
         </Card>
