@@ -1,4 +1,4 @@
-# w. | The Weather App Created with Astro 🌦️
+# w. | The Weather App Built with Astro 🌦️
 
 ![weather_app](/src/assets/home.png)
 
