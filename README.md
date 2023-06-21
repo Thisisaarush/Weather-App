@@ -1,7 +1,5 @@
 # w. | The Weather App Created with Astro 🌦️
 
-### ⚠️ You Will Find Some Data Missing Due to the `FREE API` Tier 🙃 Limit Reached.
-
 ![weather_app](/src/assets/home.png)
 
 ## Local Setup
